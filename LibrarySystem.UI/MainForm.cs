@@ -182,7 +182,7 @@ public partial class MainForm : Form, IMainView
     {
         base.OnResize(e);
         // Обновляем позицию индикатора при изменении размера формы
-        if (_activeIndicator.Visible)
+        if (_activeIndicator != null && _activeIndicator.Visible)
         {
             NavigateTo(CurrentScreen());
         }
