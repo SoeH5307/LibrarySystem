@@ -1,0 +1,33 @@
+# Visual Studio / C# / Windows Forms
+[Bb]in/
+[Oo]bj/
+.vs/
+*.user
+*.suo
+*.dotcover
+*.nupkg
+*.log
+*.cache
+*.csproj.user
+*.publish.xml
+
+# .NET
+*.dll
+*.exe
+*.pdb
+*.appxrecipe
+*.appxbundle
+
+# NuGet
+*.nupkg
+.nuget/
+packages/
+
+# IDE
+.idea/
+.vscode/
+*.code-workspace
+
+# Temp
+*.tmp
+*.tlog
