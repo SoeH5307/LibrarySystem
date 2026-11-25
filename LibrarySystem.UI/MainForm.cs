@@ -137,13 +137,13 @@ public partial class MainForm : Form, IMainView
                     Point itemScreenPoint = activeItem.Owner.PointToScreen(activeItem.Bounds.Location);
                     Point itemClientPoint = this.PointToClient(itemScreenPoint);
                     _activeIndicator.Left = itemClientPoint.X;
-                    _activeIndicator.Top = menuStrip.Bottom - _activeIndicator.Height;
+                    _activeIndicator.Top = menuStrip.Bottom;
                     _activeIndicator.Width = activeItem.Bounds.Width;
                 }
                 else
                 {
                     _activeIndicator.Left = menuStrip.Left + activeItem.Bounds.Left;
-                    _activeIndicator.Top = menuStrip.Bottom - _activeIndicator.Height;
+                    _activeIndicator.Top = menuStrip.Bottom;
                     _activeIndicator.Width = activeItem.Bounds.Width;
                 }
             }
@@ -176,5 +176,37 @@ public partial class MainForm : Form, IMainView
     {
         base.OnLoad(e);
         ViewLoaded?.Invoke(this, EventArgs.Empty);
+    }
+
+    protected override void OnResize(EventArgs e)
+    {
+        base.OnResize(e);
+        // Обновляем позицию индикатора при изменении размера формы
+        if (_activeIndicator.Visible)
+        {
+            NavigateTo(CurrentScreen());
+        }
+    }
+
+    private ScreenId CurrentScreen()
+    {
+        // Определяем текущий активный экран по видимой панели
+        foreach (Control c in this.Controls)
+        {
+            if (c is Panel p && p.Name.StartsWith("pnl") && p.Visible)
+            {
+                return p.Name switch
+                {
+                    "pnlCatalog" => ScreenId.Catalog,
+                    "pnlReaders" => ScreenId.Readers,
+                    "pnlLoan" => ScreenId.Loan,
+                    "pnlReturn" => ScreenId.Return,
+                    "pnlSearch" => ScreenId.Search,
+                    "pnlProfile" => ScreenId.Profile,
+                    _ => ScreenId.Catalog
+                };
+            }
+        }
+        return ScreenId.Catalog;
     }
 }
