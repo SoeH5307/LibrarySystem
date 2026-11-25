@@ -28,16 +28,16 @@ public sealed partial class SearchPanel : Panel
         var lbl = new Label { Text = "Поиск книг:", Location = new System.Drawing.Point(16, 12), AutoSize = true, Font = new Font("Segoe UI", 9F, FontStyle.Bold) };
 
         var lblTitle = new Label { Text = "Название:", Location = new System.Drawing.Point(16, 40), AutoSize = true };
-        var txtTitle = new TextBox { Location = new System.Drawing.Point(90, 36), Size = new System.Drawing.Size(200, 23) };
+        var txtTitle = new TextBox { Location = new System.Drawing.Point(100, 36), Size = new System.Drawing.Size(200, 23) };
 
         var lblAuthor = new Label { Text = "Автор:", Location = new System.Drawing.Point(310, 40), AutoSize = true };
-        var txtAuthor = new TextBox { Location = new System.Drawing.Point(360, 36), Size = new System.Drawing.Size(200, 23) };
+        var txtAuthor = new TextBox { Location = new System.Drawing.Point(370, 36), Size = new System.Drawing.Size(200, 23) };
 
         var lblYear = new Label { Text = "Год:", Location = new System.Drawing.Point(580, 40), AutoSize = true };
         var txtYear = new TextBox { Location = new System.Drawing.Point(620, 36), Size = new System.Drawing.Size(80, 23) };
 
-        var btnSearch = new Button { Text = "Найти", Location = new System.Drawing.Point(720, 36), Size = new System.Drawing.Size(80, 23) };
-        var btnClear = new Button { Text = "Сбросить", Location = new System.Drawing.Point(810, 36), Size = new System.Drawing.Size(80, 23) };
+        var btnSearch = new Button { Text = "Найти", Location = new System.Drawing.Point(720, 36), Size = new System.Drawing.Size(80, 30) };
+        var btnClear = new Button { Text = "Сбросить", Location = new System.Drawing.Point(800, 36), Size = new System.Drawing.Size(100, 30) };
 
         _grid.Location = new System.Drawing.Point(16, 70);
         _grid.Size = new System.Drawing.Size(992, 320);

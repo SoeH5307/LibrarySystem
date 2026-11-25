@@ -27,9 +27,9 @@ public sealed partial class CatalogPanel : Panel
     {
         // Поиск
         var searchLabel = new Label { Text = "Поиск по названию или автору:", Location = new System.Drawing.Point(16, 12), AutoSize = true };
-        var searchBox = new TextBox { Location = new System.Drawing.Point(180, 8), Size = new System.Drawing.Size(300, 23) };
-        var btnSearch = new Button { Text = "Найти", Location = new System.Drawing.Point(490, 8), Size = new System.Drawing.Size(80, 23) };
-        var btnShowAll = new Button { Text = "Показать всё", Location = new System.Drawing.Point(580, 8), Size = new System.Drawing.Size(90, 23) };
+        var searchBox = new TextBox { Location = new System.Drawing.Point(250, 8), Size = new System.Drawing.Size(310, 30) };
+        var btnSearch = new Button { Text = "Найти", Location = new System.Drawing.Point(580, 8), Size = new System.Drawing.Size(80, 30) };
+        var btnShowAll = new Button { Text = "Показать всё", Location = new System.Drawing.Point(660, 8), Size = new System.Drawing.Size(120, 30) };
 
         // Таблица
         _grid.Location = new System.Drawing.Point(16, 50);

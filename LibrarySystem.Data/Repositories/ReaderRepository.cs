@@ -60,11 +60,11 @@ public sealed class ReaderRepository : IReaderRepository
     {
         var readers = new[]
         {
-            new Reader { Id = 1, LastName = "Иванов", FirstName = "Иван", MiddleName = "Иванович", Phone = "+7(900)123-45-67", Address = "г. Москва, ул. Ленина, 1" },
-            new Reader { Id = 2, LastName = "Петрова", FirstName = "Мария", MiddleName = "Сергеевна", Phone = "+7(900)234-56-78", Address = "г. Москва, ул. Пушкина, 5" },
-            new Reader { Id = 3, LastName = "Сидоров", FirstName = "Алексей", MiddleName = "Владимирович", Phone = "+7(900)345-67-89", Address = "г. Москва, ул. Гагарина, 10" },
-            new Reader { Id = 4, LastName = "Козлова", FirstName = "Ольга", MiddleName = "Александровна", Phone = "+7(900)456-78-90", Address = "г. Москва, ул. Советская, 15" },
-            new Reader { Id = 5, LastName = "Новиков", FirstName = "Дмитрий", MiddleName = "Сергеевич", Phone = "+7(900)567-89-01", Address = "г. Москва, ул. Мира, 20" }
+            new Reader { Id = 1, LastName = "Иванов", FirstName = "Иван", MiddleName = "Иванович", Phone = "+375(29)348-19-02", Address = "пр-т Независимости, д. 24, корп. 1" },
+            new Reader { Id = 2, LastName = "Петрова", FirstName = "Мария", MiddleName = "Сергеевна", Phone = "+375(33)612-84-57", Address = "ул. Ленина, д. 48, корп. 2" },
+            new Reader { Id = 3, LastName = "Сидоров", FirstName = "Алексей", MiddleName = "Владимирович", Phone = "+375(25)904-31-76", Address = "ул. Советская, д. 67, корп. 3" },
+            new Reader { Id = 4, LastName = "Козлова", FirstName = "Ольга", MiddleName = "Александровна", Phone = "+375(29)753-09-44", Address = "ул. Ожешко, д. 19, корп. 1" },
+            new Reader { Id = 5, LastName = "Новиков", FirstName = "Дмитрий", MiddleName = "Сергеевич", Phone = "+375(44)581-26-80", Address = "пр-т Победы, д. 12, корп. 4" }
         };
 
         _readers.AddRange(readers);

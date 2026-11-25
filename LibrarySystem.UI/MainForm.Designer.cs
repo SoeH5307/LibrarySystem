@@ -131,13 +131,14 @@ namespace LibrarySystem.UI
             this.lblTitle.Name = "lblTitle";
             this.lblTitle.Size = new System.Drawing.Size(136, 19);
             this.lblTitle.TabIndex = 4;
-            this.lblTitle.Text = "ИС «Библиотека»";
+            this.lblTitle.Visible = false;
+            this.lblTitle.Visible = false;
             // 
             // pnlCatalog
             // 
             this.pnlCatalog.Location = new System.Drawing.Point(0, 60);
             this.pnlCatalog.Name = "pnlCatalog";
-            this.pnlCatalog.Size = new System.Drawing.Size(1024, 530);
+            this.pnlCatalog.Size = new System.Drawing.Size(900, 480);
             this.pnlCatalog.TabIndex = 5;
             this.pnlCatalog.Visible = false;
             // 
@@ -145,7 +146,7 @@ namespace LibrarySystem.UI
             // 
             this.pnlReaders.Location = new System.Drawing.Point(0, 60);
             this.pnlReaders.Name = "pnlReaders";
-            this.pnlReaders.Size = new System.Drawing.Size(1024, 530);
+            this.pnlReaders.Size = new System.Drawing.Size(900, 480);
             this.pnlReaders.TabIndex = 6;
             this.pnlReaders.Visible = false;
             // 
@@ -153,7 +154,7 @@ namespace LibrarySystem.UI
             // 
             this.pnlLoan.Location = new System.Drawing.Point(0, 60);
             this.pnlLoan.Name = "pnlLoan";
-            this.pnlLoan.Size = new System.Drawing.Size(1024, 530);
+            this.pnlLoan.Size = new System.Drawing.Size(900, 480);
             this.pnlLoan.TabIndex = 7;
             this.pnlLoan.Visible = false;
             // 
@@ -161,7 +162,7 @@ namespace LibrarySystem.UI
             // 
             this.pnlReturn.Location = new System.Drawing.Point(0, 60);
             this.pnlReturn.Name = "pnlReturn";
-            this.pnlReturn.Size = new System.Drawing.Size(1024, 530);
+            this.pnlReturn.Size = new System.Drawing.Size(900, 480);
             this.pnlReturn.TabIndex = 8;
             this.pnlReturn.Visible = false;
             // 
@@ -169,7 +170,7 @@ namespace LibrarySystem.UI
             // 
             this.pnlSearch.Location = new System.Drawing.Point(0, 60);
             this.pnlSearch.Name = "pnlSearch";
-            this.pnlSearch.Size = new System.Drawing.Size(1024, 530);
+            this.pnlSearch.Size = new System.Drawing.Size(900, 480);
             this.pnlSearch.TabIndex = 9;
             this.pnlSearch.Visible = false;
             // 
@@ -177,7 +178,7 @@ namespace LibrarySystem.UI
             // 
             this.pnlProfile.Location = new System.Drawing.Point(0, 60);
             this.pnlProfile.Name = "pnlProfile";
-            this.pnlProfile.Size = new System.Drawing.Size(1024, 530);
+            this.pnlProfile.Size = new System.Drawing.Size(900, 480);
             this.pnlProfile.TabIndex = 10;
             this.pnlProfile.Visible = false;
             // 
@@ -185,7 +186,7 @@ namespace LibrarySystem.UI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1024, 640);
+            this.ClientSize = new System.Drawing.Size(900, 560);
             this.Controls.Add(this.lblTitle);
             this.Controls.Add(this.pnlProfile);
             this.Controls.Add(this.pnlSearch);
