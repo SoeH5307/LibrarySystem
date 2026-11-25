@@ -15,6 +15,7 @@ public partial class MainForm : Form, IMainView
     private readonly Panel _activeIndicator;
 
     public event EventHandler? ViewLoaded;
+    public event EventHandler<ScreenId>? ScreenRequested;
 
     public MainForm()
     {
