@@ -30,7 +30,9 @@ public partial class MainForm : Form, IMainView
             Size = new System.Drawing.Size(100, 3),
             Visible = false,
         };
-        menuStrip.Controls.Add(_activeIndicator);
+        // Добавляем в Controls формы, а не в menuStrip (Items — read-only)
+        this.Controls.Add(_activeIndicator);
+        _activeIndicator.BringToFront();
 
         // Подписки на клики по меню
         miCatalog.Click += (_, _) => NavigateTo(ScreenId.Catalog);
@@ -119,9 +121,13 @@ public partial class MainForm : Form, IMainView
             {
                 activeItem.BackColor = SystemColors.Highlight;
                 activeItem.ForeColor = Color.White;
-                Rectangle bounds = activeItem.Bounds;
-                _activeIndicator.Left = bounds.Left;
-                _activeIndicator.Width = bounds.Width;
+                
+                // Индикатор теперь в Controls формы, нужно преобразовать координаты
+                Point itemScreenPoint = activeItem.Owner.PointToScreen(activeItem.Bounds.Location);
+                Point itemClientPoint = this.PointToClient(itemScreenPoint);
+                _activeIndicator.Left = itemClientPoint.X;
+                _activeIndicator.Top = menuStrip.Bottom - _activeIndicator.Height; // Сразу под меню
+                _activeIndicator.Width = activeItem.Bounds.Width;
             }
 
             lblStatus.Text = $"Раздел: {ScreenTitles.Get(screen)}";
