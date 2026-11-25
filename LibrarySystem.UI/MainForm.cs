@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.ComponentModel.Design.Serialization;
 using LibrarySystem.Logic.Navigation;
 using LibrarySystem.Logic.Views;
 
@@ -14,7 +15,6 @@ public partial class MainForm : Form, IMainView
     private readonly Panel _activeIndicator;
 
     public event EventHandler? ViewLoaded;
-    public event EventHandler<ScreenId>? ScreenRequested;
 
     public MainForm()
     {
@@ -40,11 +40,13 @@ public partial class MainForm : Form, IMainView
         miSearch.Click += (_, _) => NavigateTo(ScreenId.Search);
     }
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public string UserName
     {
         set => lblUser.Text = value;
     }
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public string StatusText
     {
         set => lblStatus.Text = value;
