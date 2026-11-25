@@ -184,18 +184,19 @@ public partial class MainForm : Form, IMainView
         // Обновляем позицию индикатора при изменении размера формы
         if (_activeIndicator != null && _activeIndicator.Visible)
         {
-            NavigateTo(CurrentScreen());
+            UpdateIndicatorPosition();
         }
     }
 
-    private ScreenId CurrentScreen()
+    private void UpdateIndicatorPosition()
     {
         // Определяем текущий активный экран по видимой панели
+        ScreenId current = ScreenId.Catalog;
         foreach (Control c in this.Controls)
         {
             if (c is Panel p && p.Name.StartsWith("pnl") && p.Visible)
             {
-                return p.Name switch
+                current = p.Name switch
                 {
                     "pnlCatalog" => ScreenId.Catalog,
                     "pnlReaders" => ScreenId.Readers,
@@ -205,8 +206,36 @@ public partial class MainForm : Form, IMainView
                     "pnlProfile" => ScreenId.Profile,
                     _ => ScreenId.Catalog
                 };
+                break;
             }
         }
-        return ScreenId.Catalog;
+
+        ToolStripItem? activeItem = current switch
+        {
+            ScreenId.Catalog => miCatalog,
+            ScreenId.Readers => miReaders,
+            ScreenId.Loan => miLoan,
+            ScreenId.Return => miReturn,
+            ScreenId.Search => miSearch,
+            _ => miCatalog
+        };
+
+        if (activeItem != null)
+        {
+            if (activeItem.Owner != null)
+            {
+                Point itemScreenPoint = activeItem.Owner.PointToScreen(activeItem.Bounds.Location);
+                Point itemClientPoint = this.PointToClient(itemScreenPoint);
+                _activeIndicator.Left = itemClientPoint.X;
+                _activeIndicator.Top = menuStrip.Bottom;
+                _activeIndicator.Width = activeItem.Bounds.Width;
+            }
+            else
+            {
+                _activeIndicator.Left = menuStrip.Left + activeItem.Bounds.Left;
+                _activeIndicator.Top = menuStrip.Bottom;
+                _activeIndicator.Width = activeItem.Bounds.Width;
+            }
+        }
     }
 }
