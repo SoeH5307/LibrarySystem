@@ -2,6 +2,7 @@ using System.ComponentModel;
 using System.ComponentModel.Design.Serialization;
 using LibrarySystem.Logic.Navigation;
 using LibrarySystem.Logic.Views;
+using LibrarySystem.UI.Screens;
 
 namespace LibrarySystem.UI;
 
@@ -31,7 +32,6 @@ public partial class MainForm : Form, IMainView
             Size = new System.Drawing.Size(100, 3),
             Visible = false,
         };
-        // Добавляем в Controls формы, а не в menuStrip (Items — read-only)
         this.Controls.Add(_activeIndicator);
         _activeIndicator.BringToFront();
 
@@ -41,6 +41,14 @@ public partial class MainForm : Form, IMainView
         miLoan.Click += (_, _) => NavigateTo(ScreenId.Loan);
         miReturn.Click += (_, _) => NavigateTo(ScreenId.Return);
         miSearch.Click += (_, _) => NavigateTo(ScreenId.Search);
+
+        // Загрузка панелей (UserControl'ы) в контейнеры
+        LoadPanelContent(pnlCatalog, ScreenId.Catalog);
+        LoadPanelContent(pnlReaders, ScreenId.Readers);
+        LoadPanelContent(pnlLoan, ScreenId.Loan);
+        LoadPanelContent(pnlReturn, ScreenId.Return);
+        LoadPanelContent(pnlSearch, ScreenId.Search);
+        LoadPanelContent(pnlProfile, ScreenId.Profile);
     }
 
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -107,7 +115,7 @@ public partial class MainForm : Form, IMainView
             target.BringToFront();
             _activeIndicator.Visible = true;
 
-            // Подсветка меню через ToolStripItem.Bounds
+            // Подсветка меню
             ToolStripItem? activeItem = screen switch
             {
                 ScreenId.Catalog => miCatalog,
@@ -124,15 +132,35 @@ public partial class MainForm : Form, IMainView
                 activeItem.ForeColor = Color.White;
                 
                 // Индикатор теперь в Controls формы, нужно преобразовать координаты
-                Point itemScreenPoint = activeItem.Owner.PointToScreen(activeItem.Bounds.Location);
-                Point itemClientPoint = this.PointToClient(itemScreenPoint);
-                _activeIndicator.Left = itemClientPoint.X;
-                _activeIndicator.Top = menuStrip.Bottom - _activeIndicator.Height; // Сразу под меню
-                _activeIndicator.Width = activeItem.Bounds.Width;
+                if (activeItem.Owner != null)
+                {
+                    Point itemScreenPoint = activeItem.Owner.PointToScreen(activeItem.Bounds.Location);
+                    Point itemClientPoint = this.PointToClient(itemScreenPoint);
+                    _activeIndicator.Left = itemClientPoint.X;
+                    _activeIndicator.Top = menuStrip.Bottom - _activeIndicator.Height;
+                    _activeIndicator.Width = activeItem.Bounds.Width;
+                }
+                else
+                {
+                    _activeIndicator.Left = menuStrip.Left + activeItem.Bounds.Left;
+                    _activeIndicator.Top = menuStrip.Bottom - _activeIndicator.Height;
+                    _activeIndicator.Width = activeItem.Bounds.Width;
+                }
             }
 
             lblStatus.Text = $"Раздел: {ScreenTitles.Get(screen)}";
+            
+            // Уведомляем Presenter о навигации
+            ScreenRequested?.Invoke(this, screen);
         }
+    }
+
+    private void LoadPanelContent(Panel container, ScreenId screen)
+    {
+        var factory = new ScreenFactory();
+        var content = factory.Create(screen);
+        content.Dock = DockStyle.Fill;
+        container.Controls.Add(content);
     }
 
     private void ResetMenuHighlight()
