@@ -149,9 +149,6 @@ public partial class MainForm : Form, IMainView
             }
 
             lblStatus.Text = $"Раздел: {ScreenTitles.Get(screen)}";
-            
-            // Уведомляем Presenter о навигации
-            ScreenRequested?.Invoke(this, screen);
         }
     }
 
