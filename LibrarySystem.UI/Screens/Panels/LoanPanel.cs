@@ -44,16 +44,18 @@ public sealed partial class LoanPanel : Panel
         };
         layout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50));
         layout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50));
-        layout.RowStyles.Add(new RowStyle(SizeType.Absolute, 25)); // Book label
-        layout.RowStyles.Add(new RowStyle(SizeType.Percent, 40));   // Book grid
-        layout.RowStyles.Add(new RowStyle(SizeType.Absolute, 25)); // Reader label
-        layout.RowStyles.Add(new RowStyle(SizeType.Percent, 35));   // Reader grid + buttons
+        layout.RowStyles.Add(new RowStyle(SizeType.Absolute, 25)); // Row 0: Labels side by side
+        layout.RowStyles.Add(new RowStyle(SizeType.Percent, 60));   // Row 1: Grids side by side
+        layout.RowStyles.Add(new RowStyle(SizeType.Absolute, 40));  // Row 2: Buttons
+        layout.RowStyles.Add(new RowStyle(SizeType.Absolute, 30));  // Row 3: Info label
 
-        // Row 0: Book label
+        // Row 0: Labels side by side
         var lblBook = new Label { Text = "Выберите книгу (свободные):", Anchor = AnchorStyles.Left, AutoSize = true, Font = new Font("Segoe UI", 9F, FontStyle.Bold) };
+        var lblReader = new Label { Text = "Выберите читателя:", Anchor = AnchorStyles.Left, AutoSize = true, Font = new Font("Segoe UI", 9F, FontStyle.Bold) };
         layout.Controls.Add(lblBook, 0, 0);
+        layout.Controls.Add(lblReader, 1, 0);
 
-        // Row 1: Book grid (left)
+        // Row 1: Grids side by side
         _gridBooks.Dock = DockStyle.Fill;
         _gridBooks.ReadOnly = true;
         _gridBooks.AllowUserToAddRows = false;
@@ -66,21 +68,6 @@ public sealed partial class LoanPanel : Panel
         _gridBooks.Columns["Id"].Visible = false;
         layout.Controls.Add(_gridBooks, 0, 1);
 
-        // Row 2: Reader label (right)
-        var lblReader = new Label { Text = "Выберите читателя:", Anchor = AnchorStyles.Left, AutoSize = true, Font = new Font("Segoe UI", 9F, FontStyle.Bold) };
-        layout.Controls.Add(lblReader, 1, 2);
-
-        // Row 3: Reader grid + buttons (right)
-        var rightPanel = new TableLayoutPanel
-        {
-            Dock = DockStyle.Fill,
-            ColumnCount = 1,
-            RowCount = 2,
-        };
-        rightPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
-        rightPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 70));
-        rightPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 40));
-
         _gridReaders.Dock = DockStyle.Fill;
         _gridReaders.ReadOnly = true;
         _gridReaders.AllowUserToAddRows = false;
@@ -90,8 +77,9 @@ public sealed partial class LoanPanel : Panel
         _gridReaders.Columns.Add("FullName", "ФИО");
         _gridReaders.Columns.Add("Phone", "Телефон");
         _gridReaders.Columns["Id"].Visible = false;
-        rightPanel.Controls.Add(_gridReaders, 0, 0);
+        layout.Controls.Add(_gridReaders, 1, 1);
 
+        // Row 2: Buttons
         var btnPanel = new FlowLayoutPanel { Dock = DockStyle.Fill, FlowDirection = FlowDirection.LeftToRight, Padding = new Padding(0, 8, 0, 0) };
         _btnIssue.Text = "Выдать книгу";
         _btnIssue.Size = new Size(140, 35);
@@ -101,20 +89,16 @@ public sealed partial class LoanPanel : Panel
         _btnRefresh.Size = new Size(100, 35);
         btnPanel.Controls.Add(_btnIssue);
         btnPanel.Controls.Add(_btnRefresh);
-        rightPanel.Controls.Add(btnPanel, 0, 1);
+        layout.Controls.Add(btnPanel, 0, 2);
+        layout.SetColumnSpan(btnPanel, 2);
 
-        layout.Controls.Add(rightPanel, 1, 3);
-
-        // Info label spans bottom
-        var bottomPanel = new TableLayoutPanel { Dock = DockStyle.Fill, ColumnCount = 1, RowCount = 1, Padding = new Padding(16, 8, 16, 16) };
+        // Row 3: Info label
         _infoLabel.AutoSize = true;
         _infoLabel.Font = new Font("Segoe UI", 9F, FontStyle.Italic);
-        bottomPanel.Controls.Add(_infoLabel, 0, 0);
-        bottomPanel.Dock = DockStyle.Bottom;
-        bottomPanel.Height = 40;
+        layout.Controls.Add(_infoLabel, 0, 3);
+        layout.SetColumnSpan(_infoLabel, 2);
 
         Controls.Add(layout);
-        Controls.Add(bottomPanel);
 
         _btnIssue.Click += (_, _) => IssueBook();
         _btnRefresh.Click += (_, _) => { LoadBooks(); LoadReaders(); };

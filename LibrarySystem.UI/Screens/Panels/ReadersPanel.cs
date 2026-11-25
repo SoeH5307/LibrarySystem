@@ -50,10 +50,10 @@ public sealed partial class ReadersPanel : Panel
         _searchBox.Anchor = AnchorStyles.Left | AnchorStyles.Right;
         _searchBox.Size = new Size(200, 23);
         _btnSearch.Text = "Найти";
-        _btnSearch.Size = new Size(80, 23);
+        _btnSearch.Size = new Size(80, 30);
         _btnSearch.Anchor = AnchorStyles.Left;
         _btnShowAll.Text = "Показать всех";
-        _btnShowAll.Size = new Size(100, 23);
+        _btnShowAll.Size = new Size(120, 30);
         _btnShowAll.Anchor = AnchorStyles.Left;
 
         layout.Controls.Add(lblSearch, 0, 0);
