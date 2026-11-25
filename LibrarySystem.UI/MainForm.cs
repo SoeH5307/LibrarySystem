@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using LibrarySystem.Logic.Navigation;
 using LibrarySystem.Logic.Views;
 
@@ -72,15 +73,11 @@ public partial class MainForm : Form, IMainView
 
     public void NavigateTo(ScreenId screen)
     {
-        // Скролл в начало контента панели если нужно
-        bool isLibrarian = _userRole == UserRole.Librarian;
-
         // Сброс подсветки
         ResetMenuHighlight();
         _activeIndicator.Visible = false;
 
-        // Скрываем все pane-панели (они создаются в InitializeComponent)
-        // Найти по имени
+        // Скрываем все pane-панели
         foreach (Control c in this.Controls)
         {
             if (c is Panel p && p.Name.StartsWith("pnl"))
@@ -105,8 +102,8 @@ public partial class MainForm : Form, IMainView
             target.BringToFront();
             _activeIndicator.Visible = true;
 
-            // Подсветка меню
-            ToolStripMenuItem? activeItem = screen switch
+            // Подсветка меню через ToolStripItem.Bounds
+            ToolStripItem? activeItem = screen switch
             {
                 ScreenId.Catalog => miCatalog,
                 ScreenId.Readers => miReaders,
@@ -120,8 +117,9 @@ public partial class MainForm : Form, IMainView
             {
                 activeItem.BackColor = SystemColors.Highlight;
                 activeItem.ForeColor = Color.White;
-                _activeIndicator.Left = activeItem.Left;
-                _activeIndicator.Width = activeItem.Width;
+                Rectangle bounds = activeItem.Bounds;
+                _activeIndicator.Left = bounds.Left;
+                _activeIndicator.Width = bounds.Width;
             }
 
             lblStatus.Text = $"Раздел: {ScreenTitles.Get(screen)}";
@@ -130,24 +128,12 @@ public partial class MainForm : Form, IMainView
 
     private void ResetMenuHighlight()
     {
-        _miCatalog.BackColor = SystemColors.Control;
-        _miCatalog.ForeColor = SystemColors.ControlText;
-        _miReaders.BackColor = SystemColors.Control;
-        _miReaders.ForeColor = SystemColors.ControlText;
-        _miLoan.BackColor = SystemColors.Control;
-        _miLoan.ForeColor = SystemColors.ControlText;
-        _miReturn.BackColor = SystemColors.Control;
-        _miReturn.ForeColor = SystemColors.ControlText;
-        _miSearch.BackColor = SystemColors.Control;
-        _miSearch.ForeColor = SystemColors.ControlText;
+        foreach (ToolStripItem item in menuStrip.Items)
+        {
+            item.BackColor = SystemColors.Control;
+            item.ForeColor = SystemColors.ControlText;
+        }
     }
-
-    // Доступ к элементам меню для проверки роли
-    private ToolStripMenuItem _miCatalog => miCatalog;
-    private ToolStripMenuItem _miReaders => miReaders;
-    private ToolStripMenuItem _miLoan => miLoan;
-    private ToolStripMenuItem _miReturn => miReturn;
-    private ToolStripMenuItem _miSearch => miSearch;
 
     protected override void OnLoad(EventArgs e)
     {
