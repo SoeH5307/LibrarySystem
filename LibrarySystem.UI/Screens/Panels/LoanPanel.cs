@@ -1,5 +1,6 @@
 using LibrarySystem.Core.Models;
 using LibrarySystem.Data.Repositories;
+using System.Windows.Forms;
 
 namespace LibrarySystem.UI.Screens.Panels;
 
@@ -15,6 +16,8 @@ public sealed partial class LoanPanel : Panel
     private readonly DataGridView _gridBooks = new();
     private readonly DataGridView _gridReaders = new();
     private readonly Label _infoLabel = new();
+    private readonly Button _btnIssue = new();
+    private readonly Button _btnRefresh = new();
 
     public LoanPanel() : this(new BookRepository(), new ReaderRepository(), new LoanRepository())
     {
@@ -31,10 +34,27 @@ public sealed partial class LoanPanel : Panel
 
     private void BuildUI()
     {
-        // Секция: выбор книги
-        var lblBook = new Label { Text = "Выберите книгу (свободные):", Location = new System.Drawing.Point(16, 12), AutoSize = true, Font = new Font("Segoe UI", 9F, FontStyle.Bold) };
-        _gridBooks.Location = new System.Drawing.Point(16, 35);
-        _gridBooks.Size = new System.Drawing.Size(480, 200);
+        var layout = new TableLayoutPanel
+        {
+            Dock = DockStyle.Fill,
+            ColumnCount = 2,
+            RowCount = 4,
+            Padding = new Padding(16),
+            AutoSize = false,
+        };
+        layout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50));
+        layout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50));
+        layout.RowStyles.Add(new RowStyle(SizeType.Absolute, 25)); // Book label
+        layout.RowStyles.Add(new RowStyle(SizeType.Percent, 40));   // Book grid
+        layout.RowStyles.Add(new RowStyle(SizeType.Absolute, 25)); // Reader label
+        layout.RowStyles.Add(new RowStyle(SizeType.Percent, 35));   // Reader grid + buttons
+
+        // Row 0: Book label
+        var lblBook = new Label { Text = "Выберите книгу (свободные):", Anchor = AnchorStyles.Left, AutoSize = true, Font = new Font("Segoe UI", 9F, FontStyle.Bold) };
+        layout.Controls.Add(lblBook, 0, 0);
+
+        // Row 1: Book grid (left)
+        _gridBooks.Dock = DockStyle.Fill;
         _gridBooks.ReadOnly = true;
         _gridBooks.AllowUserToAddRows = false;
         _gridBooks.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
@@ -44,38 +64,60 @@ public sealed partial class LoanPanel : Panel
         _gridBooks.Columns.Add("Author", "Автор");
         _gridBooks.Columns.Add("Available", "Свободно");
         _gridBooks.Columns["Id"].Visible = false;
+        layout.Controls.Add(_gridBooks, 0, 1);
 
-        // Секция: выбор читателя
-        var lblReader = new Label { Text = "Выберите читателя:", Location = new System.Drawing.Point(520, 12), AutoSize = true, Font = new Font("Segoe UI", 9F, FontStyle.Bold) };
-        _gridReaders.Location = new System.Drawing.Point(520, 35);
-        _gridReaders.Size = new System.Drawing.Size(480, 200);
+        // Row 2: Reader label (right)
+        var lblReader = new Label { Text = "Выберите читателя:", Anchor = AnchorStyles.Left, AutoSize = true, Font = new Font("Segoe UI", 9F, FontStyle.Bold) };
+        layout.Controls.Add(lblReader, 1, 2);
+
+        // Row 3: Reader grid + buttons (right)
+        var rightPanel = new TableLayoutPanel
+        {
+            Dock = DockStyle.Fill,
+            ColumnCount = 1,
+            RowCount = 2,
+        };
+        rightPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
+        rightPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 70));
+        rightPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 40));
+
+        _gridReaders.Dock = DockStyle.Fill;
         _gridReaders.ReadOnly = true;
         _gridReaders.AllowUserToAddRows = false;
         _gridReaders.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
         _gridReaders.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
         _gridReaders.Columns.Add("Id", "Код билета");
-        _gridReaders.Columns.Add("Name", "ФИО");
+        _gridReaders.Columns.Add("FullName", "ФИО");
         _gridReaders.Columns.Add("Phone", "Телефон");
         _gridReaders.Columns["Id"].Visible = false;
+        rightPanel.Controls.Add(_gridReaders, 0, 0);
 
-        // Кнопка выдачи
-        var btnIssue = new Button { Text = "Выдать книгу", Location = new System.Drawing.Point(16, 260), Size = new System.Drawing.Size(140, 35), BackColor = System.Drawing.Color.FromArgb(0, 120, 215), ForeColor = Color.White };
-        var btnRefresh = new Button { Text = "Обновить", Location = new System.Drawing.Point(170, 260), Size = new System.Drawing.Size(100, 35) };
+        var btnPanel = new FlowLayoutPanel { Dock = DockStyle.Fill, FlowDirection = FlowDirection.LeftToRight, Padding = new Padding(0, 8, 0, 0) };
+        _btnIssue.Text = "Выдать книгу";
+        _btnIssue.Size = new Size(140, 35);
+        _btnIssue.BackColor = System.Drawing.Color.FromArgb(0, 120, 215);
+        _btnIssue.ForeColor = Color.White;
+        _btnRefresh.Text = "Обновить";
+        _btnRefresh.Size = new Size(100, 35);
+        btnPanel.Controls.Add(_btnIssue);
+        btnPanel.Controls.Add(_btnRefresh);
+        rightPanel.Controls.Add(btnPanel, 0, 1);
 
-        _infoLabel.Location = new System.Drawing.Point(16, 310);
+        layout.Controls.Add(rightPanel, 1, 3);
+
+        // Info label spans bottom
+        var bottomPanel = new TableLayoutPanel { Dock = DockStyle.Fill, ColumnCount = 1, RowCount = 1, Padding = new Padding(16, 8, 16, 16) };
         _infoLabel.AutoSize = true;
         _infoLabel.Font = new Font("Segoe UI", 9F, FontStyle.Italic);
+        bottomPanel.Controls.Add(_infoLabel, 0, 0);
+        bottomPanel.Dock = DockStyle.Bottom;
+        bottomPanel.Height = 40;
 
-        btnIssue.Click += (_, _) => IssueBook();
-        btnRefresh.Click += (_, _) => { LoadBooks(); LoadReaders(); };
+        Controls.Add(layout);
+        Controls.Add(bottomPanel);
 
-        Controls.Add(lblBook);
-        Controls.Add(_gridBooks);
-        Controls.Add(lblReader);
-        Controls.Add(_gridReaders);
-        Controls.Add(btnIssue);
-        Controls.Add(btnRefresh);
-        Controls.Add(_infoLabel);
+        _btnIssue.Click += (_, _) => IssueBook();
+        _btnRefresh.Click += (_, _) => { LoadBooks(); LoadReaders(); };
 
         LoadBooks();
         LoadReaders();

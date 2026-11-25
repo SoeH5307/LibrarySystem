@@ -1,5 +1,6 @@
 using LibrarySystem.Core.Models;
 using LibrarySystem.Data.Repositories;
+using System.Windows.Forms;
 
 namespace LibrarySystem.UI.Screens.Panels;
 
@@ -11,6 +12,8 @@ public sealed partial class ReturnPanel : Panel
     private readonly ILoanRepository _loanRepository;
     private readonly DataGridView _gridLoans = new();
     private readonly Label _infoLabel = new();
+    private readonly Button _btnReturn = new();
+    private readonly Button _btnRefresh = new();
 
     public ReturnPanel() : this(new LoanRepository())
     {
@@ -25,9 +28,23 @@ public sealed partial class ReturnPanel : Panel
 
     private void BuildUI()
     {
-        var lbl = new Label { Text = "Активные выдачи (не возвращённые):", Location = new System.Drawing.Point(16, 12), AutoSize = true, Font = new Font("Segoe UI", 9F, FontStyle.Bold) };
-        _gridLoans.Location = new System.Drawing.Point(16, 35);
-        _gridLoans.Size = new System.Drawing.Size(992, 350);
+        var layout = new TableLayoutPanel
+        {
+            Dock = DockStyle.Fill,
+            ColumnCount = 1,
+            RowCount = 3,
+            Padding = new Padding(16),
+            AutoSize = false,
+        };
+        layout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
+        layout.RowStyles.Add(new RowStyle(SizeType.Absolute, 25));
+        layout.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
+        layout.RowStyles.Add(new RowStyle(SizeType.Absolute, 60));
+
+        var lbl = new Label { Text = "Активные выдачи (не возвращённые):", Anchor = AnchorStyles.Left, AutoSize = true, Font = new Font("Segoe UI", 9F, FontStyle.Bold) };
+        layout.Controls.Add(lbl, 0, 0);
+
+        _gridLoans.Dock = DockStyle.Fill;
         _gridLoans.ReadOnly = true;
         _gridLoans.AllowUserToAddRows = false;
         _gridLoans.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
@@ -38,22 +55,35 @@ public sealed partial class ReturnPanel : Panel
         _gridLoans.Columns.Add("IssueDate", "Дата выдачи");
         _gridLoans.Columns.Add("DueDate", "Срок возврата");
         _gridLoans.Columns["LoanId"].Visible = false;
+        layout.Controls.Add(_gridLoans, 0, 1);
 
-        var btnReturn = new Button { Text = "Принять возврат", Location = new System.Drawing.Point(16, 400), Size = new System.Drawing.Size(140, 35), BackColor = System.Drawing.Color.FromArgb(0, 120, 215), ForeColor = Color.White };
-        var btnRefresh = new Button { Text = "Обновить", Location = new System.Drawing.Point(170, 400), Size = new System.Drawing.Size(100, 35) };
+        var bottomPanel = new TableLayoutPanel { Dock = DockStyle.Fill, ColumnCount = 3, RowCount = 1, Padding = new Padding(16, 0, 16, 16) };
+        bottomPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50));
+        bottomPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 140));
+        bottomPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 100));
 
-        _infoLabel.Location = new System.Drawing.Point(16, 450);
+        _btnReturn.Text = "Принять возврат";
+        _btnReturn.Size = new Size(140, 35);
+        _btnReturn.BackColor = System.Drawing.Color.FromArgb(0, 120, 215);
+        _btnReturn.ForeColor = Color.White;
+        bottomPanel.Controls.Add(_btnReturn, 1, 0);
+
+        _btnRefresh.Text = "Обновить";
+        _btnRefresh.Size = new Size(100, 35);
+        bottomPanel.Controls.Add(_btnRefresh, 2, 0);
+
         _infoLabel.AutoSize = true;
         _infoLabel.Font = new Font("Segoe UI", 9F, FontStyle.Italic);
+        bottomPanel.Controls.Add(_infoLabel, 0, 0);
+        _infoLabel.Anchor = AnchorStyles.Left;
+        _infoLabel.Margin = new Padding(0, 6, 0, 0);
 
-        btnReturn.Click += (_, _) => ReturnBook();
-        btnRefresh.Click += (_, _) => LoadLoans();
+        layout.Controls.Add(bottomPanel, 0, 2);
 
-        Controls.Add(lbl);
-        Controls.Add(_gridLoans);
-        Controls.Add(btnReturn);
-        Controls.Add(btnRefresh);
-        Controls.Add(_infoLabel);
+        Controls.Add(layout);
+
+        _btnReturn.Click += (_, _) => ReturnBook();
+        _btnRefresh.Click += (_, _) => LoadLoans();
 
         LoadLoans();
     }

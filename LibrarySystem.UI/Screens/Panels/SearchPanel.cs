@@ -1,5 +1,6 @@
 using LibrarySystem.Core.Models;
 using LibrarySystem.Data.Repositories;
+using System.Windows.Forms;
 
 namespace LibrarySystem.UI.Screens.Panels;
 
@@ -11,6 +12,11 @@ public sealed partial class SearchPanel : Panel
     private readonly IBookRepository _bookRepository;
     private readonly DataGridView _grid = new();
     private readonly Label _infoLabel = new();
+    private readonly TextBox _txtTitle = new();
+    private readonly TextBox _txtAuthor = new();
+    private readonly TextBox _txtYear = new();
+    private readonly Button _btnSearch = new();
+    private readonly Button _btnClear = new();
 
     public SearchPanel() : this(new BookRepository())
     {
@@ -25,22 +31,53 @@ public sealed partial class SearchPanel : Panel
 
     private void BuildUI()
     {
-        var lbl = new Label { Text = "Поиск книг:", Location = new System.Drawing.Point(16, 12), AutoSize = true, Font = new Font("Segoe UI", 9F, FontStyle.Bold) };
+        var layout = new TableLayoutPanel
+        {
+            Dock = DockStyle.Fill,
+            ColumnCount = 7,
+            RowCount = 2,
+            Padding = new Padding(16),
+            AutoSize = false,
+        };
+        layout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 90));   // Название:
+        layout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 200));  // input
+        layout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 70));   // Автор:
+        layout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 200));  // input
+        layout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 50));   // Год:
+        layout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 80));   // input
+        layout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));  // buttons
+        layout.RowStyles.Add(new RowStyle(SizeType.Absolute, 40));
+        layout.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
 
-        var lblTitle = new Label { Text = "Название:", Location = new System.Drawing.Point(16, 40), AutoSize = true };
-        var txtTitle = new TextBox { Location = new System.Drawing.Point(100, 36), Size = new System.Drawing.Size(200, 23) };
+        var lblTitle = new Label { Text = "Название:", Anchor = AnchorStyles.Left, AutoSize = true };
+        _txtTitle.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+        _txtTitle.Size = new Size(200, 23);
 
-        var lblAuthor = new Label { Text = "Автор:", Location = new System.Drawing.Point(310, 40), AutoSize = true };
-        var txtAuthor = new TextBox { Location = new System.Drawing.Point(370, 36), Size = new System.Drawing.Size(200, 23) };
+        var lblAuthor = new Label { Text = "Автор:", Anchor = AnchorStyles.Left, AutoSize = true };
+        _txtAuthor.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+        _txtAuthor.Size = new Size(200, 23);
 
-        var lblYear = new Label { Text = "Год:", Location = new System.Drawing.Point(580, 40), AutoSize = true };
-        var txtYear = new TextBox { Location = new System.Drawing.Point(620, 36), Size = new System.Drawing.Size(80, 23) };
+        var lblYear = new Label { Text = "Год:", Anchor = AnchorStyles.Left, AutoSize = true };
+        _txtYear.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+        _txtYear.Size = new Size(80, 23);
 
-        var btnSearch = new Button { Text = "Найти", Location = new System.Drawing.Point(720, 36), Size = new System.Drawing.Size(80, 30) };
-        var btnClear = new Button { Text = "Сбросить", Location = new System.Drawing.Point(800, 36), Size = new System.Drawing.Size(100, 30) };
+        var buttons = new FlowLayoutPanel { Dock = DockStyle.Fill, FlowDirection = FlowDirection.LeftToRight, WrapContents = false, Padding = new Padding(0) };
+        _btnSearch.Text = "Найти";
+        _btnSearch.Size = new Size(90, 30);
+        _btnClear.Text = "Сбросить";
+        _btnClear.Size = new Size(90, 30);
+        buttons.Controls.Add(_btnSearch);
+        buttons.Controls.Add(_btnClear);
 
-        _grid.Location = new System.Drawing.Point(16, 70);
-        _grid.Size = new System.Drawing.Size(992, 320);
+        layout.Controls.Add(lblTitle, 0, 0);
+        layout.Controls.Add(_txtTitle, 1, 0);
+        layout.Controls.Add(lblAuthor, 2, 0);
+        layout.Controls.Add(_txtAuthor, 3, 0);
+        layout.Controls.Add(lblYear, 4, 0);
+        layout.Controls.Add(_txtYear, 5, 0);
+        layout.Controls.Add(buttons, 6, 0);
+
+        _grid.Dock = DockStyle.Fill;
         _grid.ReadOnly = true;
         _grid.AllowUserToAddRows = false;
         _grid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
@@ -53,29 +90,23 @@ public sealed partial class SearchPanel : Panel
         _grid.Columns.Add("Pages", "Страниц");
         _grid.Columns.Add("Available", "Свободно");
         _grid.Columns["Id"].Visible = false;
+        layout.Controls.Add(_grid, 0, 1);
+        layout.SetColumnSpan(_grid, 7);
 
-        _infoLabel.Location = new System.Drawing.Point(16, 405);
         _infoLabel.AutoSize = true;
         _infoLabel.Font = new Font("Segoe UI", 9F, FontStyle.Italic);
+        _infoLabel.Location = new System.Drawing.Point(16, 452);
+        _infoLabel.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
 
-        btnSearch.Click += (_, _) => DoSearch(txtTitle.Text, txtAuthor.Text, txtYear.Text);
-        btnClear.Click += (_, _) =>
+        Controls.Add(layout);
+        Controls.Add(_infoLabel);
+
+        _btnSearch.Click += (_, _) => DoSearch(_txtTitle.Text, _txtAuthor.Text, _txtYear.Text);
+        _btnClear.Click += (_, _) =>
         {
-            txtTitle.Text = txtAuthor.Text = txtYear.Text = string.Empty;
+            _txtTitle.Text = _txtAuthor.Text = _txtYear.Text = string.Empty;
             LoadAll();
         };
-
-        Controls.Add(lbl);
-        Controls.Add(lblTitle);
-        Controls.Add(txtTitle);
-        Controls.Add(lblAuthor);
-        Controls.Add(txtAuthor);
-        Controls.Add(lblYear);
-        Controls.Add(txtYear);
-        Controls.Add(btnSearch);
-        Controls.Add(btnClear);
-        Controls.Add(_grid);
-        Controls.Add(_infoLabel);
 
         LoadAll();
     }
