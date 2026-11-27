@@ -20,7 +20,6 @@ public sealed class MainPresenter
         _userRole = userRole;
 
         _view.ViewLoaded += OnViewLoaded;
-        _view.ScreenRequested += OnScreenRequested;
     }
 
     private void OnViewLoaded(object? sender, EventArgs e)
@@ -29,21 +28,5 @@ public sealed class MainPresenter
         _view.UserName = roleText;
         _view.StatusText = "Готово к работе";
         _view.SetUserRole(_userRole);
-    }
-
-    private void OnScreenRequested(object? sender, ScreenId screen)
-    {
-        string title = ScreenTitles.Get(screen);
-
-        try
-        {
-            _navigator.NavigateTo(screen);
-            _view.StatusText = $"Открыт раздел: {title}";
-        }
-        catch (Exception ex)
-        {
-            _view.StatusText = "Ошибка открытия раздела";
-            _view.ShowMessage($"Не удалось открыть раздел «{title}»: {ex.Message}");
-        }
     }
 }
