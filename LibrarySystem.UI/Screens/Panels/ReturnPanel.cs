@@ -59,13 +59,13 @@ public sealed partial class ReturnPanel : Panel
         bottomPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 100));
 
         _btnReturn.Text = "Принять возврат";
-        _btnReturn.Size = new Size(140, 35);
+        _btnReturn.Size = new Size(160, 34);
         _btnReturn.BackColor = System.Drawing.Color.FromArgb(0, 120, 215);
         _btnReturn.ForeColor = Color.White;
         bottomPanel.Controls.Add(_btnReturn, 1, 0);
 
         _btnRefresh.Text = "Обновить";
-        _btnRefresh.Size = new Size(100, 35);
+        _btnRefresh.Size = new Size(100, 34);
         bottomPanel.Controls.Add(_btnRefresh, 2, 0);
 
         _infoLabel.AutoSize = true;

@@ -45,16 +45,16 @@ public sealed partial class ReadersPanel : Panel
         layout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
         layout.RowStyles.Add(new RowStyle(SizeType.Absolute, 40));
         layout.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
-        layout.RowStyles.Add(new RowStyle(SizeType.Absolute, 100));
+        layout.RowStyles.Add(new RowStyle(SizeType.Absolute, 90));
 
         var lblSearch = new Label { Text = "Поиск (билет/ФИО):", Anchor = AnchorStyles.Left, AutoSize = true };
         _searchBox.Anchor = AnchorStyles.Left | AnchorStyles.Right;
         _searchBox.Size = new Size(200, 23);
         _btnSearch.Text = "Найти";
-        _btnSearch.Size = new Size(80, 30);
+        _btnSearch.Size = new Size(90, 30);
         _btnSearch.Anchor = AnchorStyles.Left;
         _btnShowAll.Text = "Показать всех";
-        _btnShowAll.Size = new Size(120, 30);
+        _btnShowAll.Size = new Size(140, 30);
         _btnShowAll.Anchor = AnchorStyles.Left;
 
         layout.Controls.Add(lblSearch, 0, 0);
@@ -80,11 +80,11 @@ public sealed partial class ReadersPanel : Panel
         if (role == UserRole.Librarian)
         {
             _btnAddReader.Text = "Зарегистрировать";
-            _btnAddReader.Size = new Size(150, 30);
+            _btnAddReader.Size = new Size(170, 32);
             _btnDeleteReader.Text = "Удалить";
-            _btnDeleteReader.Size = new Size(90, 30);
+            _btnDeleteReader.Size = new Size(100, 32);
             _btnRefresh.Text = "Обновить";
-            _btnRefresh.Size = new Size(90, 30);
+            _btnRefresh.Size = new Size(100, 32);
             btnPanel.Controls.Add(_btnAddReader);
             btnPanel.Controls.Add(_btnDeleteReader);
             btnPanel.Controls.Add(_btnRefresh);
@@ -92,19 +92,31 @@ public sealed partial class ReadersPanel : Panel
         else
         {
             _btnRefresh.Text = "Обновить";
-            _btnRefresh.Size = new Size(90, 30);
+            _btnRefresh.Size = new Size(100, 32);
             btnPanel.Controls.Add(_btnRefresh);
         }
 
-        var bottomPanel = new TableLayoutPanel { Dock = DockStyle.Fill, ColumnCount = 2, RowCount = 1, Padding = new Padding(16, 8, 16, 16) };
-        bottomPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50));
-        bottomPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50));
+        var bottomPanel = new TableLayoutPanel
+        {
+            Dock = DockStyle.Fill,
+            ColumnCount = 1,
+            RowCount = 2,
+            Padding = new Padding(16, 4, 16, 8),
+        };
+        bottomPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
+        bottomPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 26));
+        bottomPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 46));
+
         _infoLabel.AutoSize = true;
         _infoLabel.Font = new Font("Segoe UI", 9F, FontStyle.Italic);
         _infoLabel.Anchor = AnchorStyles.Left;
-        _infoLabel.Margin = new Padding(0, 6, 0, 0);
+        _infoLabel.Margin = new Padding(0, 4, 0, 0);
         bottomPanel.Controls.Add(_infoLabel, 0, 0);
-        bottomPanel.Controls.Add(btnPanel, 1, 0);
+
+        btnPanel.Dock = DockStyle.Fill;
+        btnPanel.WrapContents = false;
+        btnPanel.AutoScroll = true;
+        bottomPanel.Controls.Add(btnPanel, 0, 1);
 
         layout.Controls.Add(bottomPanel, 0, 2);
         layout.SetColumnSpan(bottomPanel, 4);
@@ -152,7 +164,7 @@ public sealed partial class ReadersPanel : Panel
         using var dlg = new Form
         {
             Text = "Регистрация читателя",
-            Size = new Size(400, 250),
+            Size = new Size(440, 330),
             StartPosition = FormStartPosition.CenterParent,
             FormBorderStyle = FormBorderStyle.FixedDialog,
             MaximizeBox = false,
@@ -160,17 +172,19 @@ public sealed partial class ReadersPanel : Panel
         };
 
         var lblLastName = new Label { Text = "Фамилия:", Location = new Point(20, 20), AutoSize = true };
-        var txtLastName = new TextBox { Location = new Point(120, 16), Size = new Size(250, 23) };
+        var txtLastName = new TextBox { Location = new Point(130, 16), Size = new Size(270, 23) };
         var lblFirstName = new Label { Text = "Имя:", Location = new Point(20, 50), AutoSize = true };
-        var txtFirstName = new TextBox { Location = new Point(120, 46), Size = new Size(250, 23) };
-        var lblPhone = new Label { Text = "Телефон:", Location = new Point(20, 80), AutoSize = true };
-        var txtPhone = new TextBox { Location = new Point(120, 76), Size = new Size(250, 23) };
-        var lblAddress = new Label { Text = "Адрес:", Location = new Point(20, 110), AutoSize = true };
-        var txtAddress = new TextBox { Location = new Point(120, 106), Size = new Size(250, 23) };
-        var btnOk = new Button { Text = "Зарегистрировать", Location = new Point(120, 160), Size = new Size(140, 30), DialogResult = DialogResult.OK };
-        var btnCancel = new Button { Text = "Отмена", Location = new Point(270, 160), Size = new Size(100, 30), DialogResult = DialogResult.Cancel };
+        var txtFirstName = new TextBox { Location = new Point(130, 46), Size = new Size(270, 23) };
+        var lblMiddleName = new Label { Text = "Отчество:", Location = new Point(20, 80), AutoSize = true };
+        var txtMiddleName = new TextBox { Location = new Point(130, 76), Size = new Size(270, 23) };
+        var lblPhone = new Label { Text = "Телефон:", Location = new Point(20, 110), AutoSize = true };
+        var txtPhone = new TextBox { Location = new Point(130, 106), Size = new Size(270, 23) };
+        var lblAddress = new Label { Text = "Адрес:", Location = new Point(20, 140), AutoSize = true };
+        var txtAddress = new TextBox { Location = new Point(130, 136), Size = new Size(270, 23) };
+        var btnOk = new Button { Text = "Зарегистрировать", Location = new Point(130, 190), Size = new Size(160, 34), DialogResult = DialogResult.OK };
+        var btnCancel = new Button { Text = "Отмена", Location = new Point(300, 190), Size = new Size(100, 34), DialogResult = DialogResult.Cancel };
 
-        dlg.Controls.AddRange(new Control[] { lblLastName, txtLastName, lblFirstName, txtFirstName, lblPhone, txtPhone, lblAddress, txtAddress, btnOk, btnCancel });
+        dlg.Controls.AddRange(new Control[] { lblLastName, txtLastName, lblFirstName, txtFirstName, lblMiddleName, txtMiddleName, lblPhone, txtPhone, lblAddress, txtAddress, btnOk, btnCancel });
         dlg.AcceptButton = btnOk;
         dlg.CancelButton = btnCancel;
 
@@ -182,6 +196,7 @@ public sealed partial class ReadersPanel : Panel
                 {
                     LastName = txtLastName.Text.Trim(),
                     FirstName = txtFirstName.Text.Trim(),
+                    MiddleName = txtMiddleName.Text.Trim(),
                     Phone = txtPhone.Text.Trim(),
                     Address = txtAddress.Text.Trim()
                 };

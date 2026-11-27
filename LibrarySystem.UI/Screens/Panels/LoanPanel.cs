@@ -78,11 +78,11 @@ public sealed partial class LoanPanel : Panel
         // Row 2: Buttons
         var btnPanel = new FlowLayoutPanel { Dock = DockStyle.Fill, FlowDirection = FlowDirection.LeftToRight, Padding = new Padding(0, 8, 0, 0) };
         _btnIssue.Text = "Выдать книгу";
-        _btnIssue.Size = new Size(140, 30);
+        _btnIssue.Size = new Size(150, 32);
         _btnIssue.BackColor = System.Drawing.Color.FromArgb(0, 120, 215);
         _btnIssue.ForeColor = Color.White;
         _btnRefresh.Text = "Обновить";
-        _btnRefresh.Size = new Size(100, 30);
+        _btnRefresh.Size = new Size(100, 32);
         btnPanel.Controls.Add(_btnIssue);
         btnPanel.Controls.Add(_btnRefresh);
         layout.Controls.Add(btnPanel, 0, 2);

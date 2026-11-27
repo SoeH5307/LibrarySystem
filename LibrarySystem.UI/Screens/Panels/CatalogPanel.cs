@@ -47,7 +47,7 @@ public sealed partial class CatalogPanel : Panel
         layout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
         layout.RowStyles.Add(new RowStyle(SizeType.Absolute, 40));
         layout.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
-        layout.RowStyles.Add(new RowStyle(SizeType.Absolute, 100));
+        layout.RowStyles.Add(new RowStyle(SizeType.Absolute, 90));
 
         var lblSearch = new Label { Text = "Поиск (название/автор):", Anchor = AnchorStyles.Left, AutoSize = true };
         _searchBox.Anchor = AnchorStyles.Left | AnchorStyles.Right;
@@ -85,15 +85,15 @@ public sealed partial class CatalogPanel : Panel
         if (role == UserRole.Librarian)
         {
             _btnAddEdition.Text = "Добавить издание";
-            _btnAddEdition.Size = new Size(140, 30);
+            _btnAddEdition.Size = new Size(165, 32);
             _btnAddCopy.Text = "Принять экземпляр";
-            _btnAddCopy.Size = new Size(140, 30);
+            _btnAddCopy.Size = new Size(160, 32);
             _btnWriteOff.Text = "Списать экземпляр";
-            _btnWriteOff.Size = new Size(140, 30);
+            _btnWriteOff.Size = new Size(160, 32);
             _btnDeleteBook.Text = "Удалить книгу";
-            _btnDeleteBook.Size = new Size(120, 30);
+            _btnDeleteBook.Size = new Size(130, 32);
             _btnRefresh.Text = "Обновить";
-            _btnRefresh.Size = new Size(90, 30);
+            _btnRefresh.Size = new Size(100, 32);
             btnPanel.Controls.Add(_btnAddEdition);
             btnPanel.Controls.Add(_btnAddCopy);
             btnPanel.Controls.Add(_btnWriteOff);
@@ -103,19 +103,31 @@ public sealed partial class CatalogPanel : Panel
         else
         {
             _btnRefresh.Text = "Обновить";
-            _btnRefresh.Size = new Size(90, 30);
+            _btnRefresh.Size = new Size(100, 32);
             btnPanel.Controls.Add(_btnRefresh);
         }
 
-        var bottomPanel = new TableLayoutPanel { Dock = DockStyle.Fill, ColumnCount = 2, RowCount = 1, Padding = new Padding(16, 8, 16, 16) };
-        bottomPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50));
-        bottomPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50));
+        var bottomPanel = new TableLayoutPanel
+        {
+            Dock = DockStyle.Fill,
+            ColumnCount = 1,
+            RowCount = 2,
+            Padding = new Padding(16, 4, 16, 8),
+        };
+        bottomPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
+        bottomPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 26));
+        bottomPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 46));
+
         _infoLabel.AutoSize = true;
         _infoLabel.Font = new Font("Segoe UI", 9F, FontStyle.Italic);
         _infoLabel.Anchor = AnchorStyles.Left;
-        _infoLabel.Margin = new Padding(0, 6, 0, 0);
+        _infoLabel.Margin = new Padding(0, 4, 0, 0);
         bottomPanel.Controls.Add(_infoLabel, 0, 0);
-        bottomPanel.Controls.Add(btnPanel, 1, 0);
+
+        btnPanel.Dock = DockStyle.Fill;
+        btnPanel.WrapContents = false;
+        btnPanel.AutoScroll = true;
+        bottomPanel.Controls.Add(btnPanel, 0, 1);
 
         layout.Controls.Add(bottomPanel, 0, 2);
         layout.SetColumnSpan(bottomPanel, 5);

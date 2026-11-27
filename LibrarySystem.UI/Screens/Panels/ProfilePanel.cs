@@ -27,7 +27,7 @@ public sealed partial class ProfilePanel : Panel
 
         var lblReader = new Label { Text = "Читатель:", Location = new System.Drawing.Point(16, 40), AutoSize = true };
         var txtReaderId = new TextBox { Location = new System.Drawing.Point(90, 36), Size = new System.Drawing.Size(100, 23) };
-        var btnLoad = new Button { Text = "Загрузить", Location = new System.Drawing.Point(200, 36), Size = new System.Drawing.Size(80, 23) };
+        var btnLoad = new Button { Text = "Загрузить", Location = new System.Drawing.Point(200, 35), Size = new System.Drawing.Size(105, 28) };
 
         var lblInfo = new Label { Text = "Мои активные выдачи:", Location = new System.Drawing.Point(16, 70), AutoSize = true, Font = new Font("Segoe UI", 9F, FontStyle.Bold) };
 
