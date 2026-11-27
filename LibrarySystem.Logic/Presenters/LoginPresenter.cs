@@ -4,7 +4,7 @@ using LibrarySystem.Logic.Views;
 namespace LibrarySystem.Logic.Presenters;
 
 /// <summary>
-/// Presenter формы входа. Проверяет пароль библиотекаря и передаёт роль в главное окно.
+/// Presenter формы входа. При выборе роли библиотекаря запрашивает и проверяет пароль.
 /// </summary>
 public sealed class LoginPresenter
 {
@@ -23,31 +23,35 @@ public sealed class LoginPresenter
     private void OnViewLoaded(object? sender, EventArgs e)
     {
         _view.ShowError(string.Empty);
-        _view.ClearPassword();
     }
 
     private void OnRoleSelected(object? sender, UserRole role)
     {
         if (role == UserRole.Librarian)
         {
-            string entered = _view.Password ?? string.Empty;
+            string? entered = _view.RequestPassword();
+
+            if (entered is null)
+            {
+                // Пользователь отменил ввод пароля
+                _view.ShowError(string.Empty);
+                return;
+            }
 
             if (string.IsNullOrWhiteSpace(entered))
             {
-                _view.ShowError("Введите пароль библиотекаря.");
+                _view.ShowError("Пароль не введён. Вход отменён.");
                 return;
             }
 
             if (entered != LibrarianPassword)
             {
-                _view.ShowError("Неверный пароль. Попробуйте ещё раз.");
-                _view.ClearPassword();
+                _view.ShowError("Неверный пароль библиотекаря.");
                 return;
             }
         }
 
         _view.ShowError(string.Empty);
-        _view.ClearPassword();
         RoleSelected?.Invoke(this, role);
     }
 
