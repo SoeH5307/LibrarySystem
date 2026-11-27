@@ -1,4 +1,4 @@
-using LibrarySystem.Data;
+using LibrarySystem.Core.Models;
 using LibrarySystem.Data.Repositories;
 using LibrarySystem.Logic.Navigation;
 using LibrarySystem.UI.Screens.Panels;
@@ -19,6 +19,12 @@ public sealed class ScreenFactory : IScreenFactory
         _bookRepo = bookRepo;
         _readerRepo = readerRepo;
         _loanRepo = loanRepo;
+    }
+
+    public ScreenFactory() : this(new LibrarySystem.Data.Repositories.BookRepository(),
+                                   new LibrarySystem.Data.Repositories.ReaderRepository(),
+                                   new LibrarySystem.Data.Repositories.LoanRepository())
+    {
     }
 
     public System.Windows.Forms.Panel Create(ScreenId screen)

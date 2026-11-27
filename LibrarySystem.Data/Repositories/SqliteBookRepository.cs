@@ -37,7 +37,7 @@ public sealed class SqliteBookRepository : IBookRepository
                 Year = reader.IsDBNull(4) ? 0 : reader.GetInt32(4),
                 Pages = reader.IsDBNull(5) ? 0 : reader.GetInt32(5),
                 Subject = reader.IsDBNull(6) ? "" : reader.GetString(6),
-                Price = reader.IsDBNull(7) ? 0 : reader.GetDouble(7),
+                Price = reader.IsDBNull(7) ? 0m : (decimal)reader.GetDouble(7),
                 TotalCopies = reader.GetInt32(8),
                 AvailableCount = reader.GetInt32(9)
             });
@@ -66,7 +66,7 @@ public sealed class SqliteBookRepository : IBookRepository
                 Year = reader.IsDBNull(4) ? 0 : reader.GetInt32(4),
                 Pages = reader.IsDBNull(5) ? 0 : reader.GetInt32(5),
                 Subject = reader.IsDBNull(6) ? "" : reader.GetString(6),
-                Price = reader.IsDBNull(7) ? 0 : reader.GetDouble(7),
+                Price = reader.IsDBNull(7) ? 0m : (decimal)reader.GetDouble(7),
                 TotalCopies = reader.GetInt32(8),
                 AvailableCount = reader.GetInt32(9)
             };
@@ -100,7 +100,7 @@ public sealed class SqliteBookRepository : IBookRepository
                 Year = reader.IsDBNull(4) ? 0 : reader.GetInt32(4),
                 Pages = reader.IsDBNull(5) ? 0 : reader.GetInt32(5),
                 Subject = reader.IsDBNull(6) ? "" : reader.GetString(6),
-                Price = reader.IsDBNull(7) ? 0 : reader.GetDouble(7),
+                Price = reader.IsDBNull(7) ? 0m : (decimal)reader.GetDouble(7),
                 TotalCopies = reader.GetInt32(8),
                 AvailableCount = reader.GetInt32(9)
             });

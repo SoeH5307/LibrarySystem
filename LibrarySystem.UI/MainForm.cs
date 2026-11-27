@@ -14,12 +14,17 @@ public partial class MainForm : Form, IMainView
 {
     private UserRole _userRole = UserRole.None;
     private readonly Panel _activeIndicator;
+    private readonly IScreenFactory _screenFactory;
 
     public event EventHandler? ViewLoaded;
-    public event EventHandler<ScreenId>? ScreenRequested;
 
-    public MainForm()
+    public MainForm() : this(new ScreenFactory())
     {
+    }
+
+    public MainForm(IScreenFactory screenFactory)
+    {
+        _screenFactory = screenFactory ?? throw new ArgumentNullException(nameof(screenFactory));
         InitializeComponent();
 
         // Индикатор активного раздела (полоска под меню)
@@ -28,7 +33,7 @@ public partial class MainForm : Form, IMainView
             BackColor = SystemColors.Highlight,
             Height = 3,
             Dock = DockStyle.None,
-            Location = new System.Drawing.Point(0, menuStrip.Height),
+            Location = new System.Drawing.Point(0, menuStrip!.Height),
             Size = new System.Drawing.Size(100, 3),
             Visible = false,
         };
@@ -36,31 +41,31 @@ public partial class MainForm : Form, IMainView
         _activeIndicator.BringToFront();
 
         // Подписки на клики по меню
-        miCatalog.Click += (_, _) => NavigateTo(ScreenId.Catalog);
-        miReaders.Click += (_, _) => NavigateTo(ScreenId.Readers);
-        miLoan.Click += (_, _) => NavigateTo(ScreenId.Loan);
-        miReturn.Click += (_, _) => NavigateTo(ScreenId.Return);
-        miSearch.Click += (_, _) => NavigateTo(ScreenId.Search);
+        miCatalog!.Click += (_, _) => NavigateTo(ScreenId.Catalog);
+        miReaders!.Click += (_, _) => NavigateTo(ScreenId.Readers);
+        miLoan!.Click += (_, _) => NavigateTo(ScreenId.Loan);
+        miReturn!.Click += (_, _) => NavigateTo(ScreenId.Return);
+        miSearch!.Click += (_, _) => NavigateTo(ScreenId.Search);
 
         // Загрузка панелей (UserControl'ы) в контейнеры
-        LoadPanelContent(pnlCatalog, ScreenId.Catalog);
-        LoadPanelContent(pnlReaders, ScreenId.Readers);
-        LoadPanelContent(pnlLoan, ScreenId.Loan);
-        LoadPanelContent(pnlReturn, ScreenId.Return);
-        LoadPanelContent(pnlSearch, ScreenId.Search);
-        LoadPanelContent(pnlProfile, ScreenId.Profile);
+        LoadPanelContent(pnlCatalog!, ScreenId.Catalog);
+        LoadPanelContent(pnlReaders!, ScreenId.Readers);
+        LoadPanelContent(pnlLoan!, ScreenId.Loan);
+        LoadPanelContent(pnlReturn!, ScreenId.Return);
+        LoadPanelContent(pnlSearch!, ScreenId.Search);
+        LoadPanelContent(pnlProfile!, ScreenId.Profile);
     }
 
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public string UserName
     {
-        set => lblUser.Text = value;
+        set => lblUser!.Text = value;
     }
 
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public string StatusText
     {
-        set => lblStatus.Text = value;
+        set => lblStatus!.Text = value;
     }
 
     public void ShowMessage(string message)
@@ -74,11 +79,11 @@ public partial class MainForm : Form, IMainView
         bool isLibrarian = role == UserRole.Librarian;
 
         // Меню: читатель видит только каталог, поиск и профиль
-        miCatalog.Visible = true;
-        miReaders.Visible = isLibrarian;
-        miLoan.Visible = isLibrarian;
-        miReturn.Visible = isLibrarian;
-        miSearch.Visible = true;
+        miCatalog!.Visible = true;
+        miReaders!.Visible = isLibrarian;
+        miLoan!.Visible = isLibrarian;
+        miReturn!.Visible = isLibrarian;
+        miSearch!.Visible = true;
 
         // Активный раздел по умолчанию — Каталог
         NavigateTo(ScreenId.Catalog);
@@ -91,11 +96,12 @@ public partial class MainForm : Form, IMainView
         _activeIndicator.Visible = false;
 
         // Скрываем все pane-панели
-        foreach (Control c in this.Controls)
-        {
-            if (c is Panel p && p.Name.StartsWith("pnl"))
-                p.Visible = false;
-        }
+        pnlCatalog!.Visible = false;
+        pnlReaders!.Visible = false;
+        pnlLoan!.Visible = false;
+        pnlReturn!.Visible = false;
+        pnlSearch!.Visible = false;
+        pnlProfile!.Visible = false;
 
         // Показываем нужную
         Panel? target = screen switch
@@ -130,39 +136,38 @@ public partial class MainForm : Form, IMainView
             {
                 activeItem.BackColor = SystemColors.Highlight;
                 activeItem.ForeColor = Color.White;
-                
+
                 // Индикатор теперь в Controls формы, нужно преобразовать координаты
                 if (activeItem.Owner != null)
                 {
                     Point itemScreenPoint = activeItem.Owner.PointToScreen(activeItem.Bounds.Location);
                     Point itemClientPoint = this.PointToClient(itemScreenPoint);
                     _activeIndicator.Left = itemClientPoint.X;
-                    _activeIndicator.Top = menuStrip.Bottom;
+                    _activeIndicator.Top = menuStrip!.Bottom;
                     _activeIndicator.Width = activeItem.Bounds.Width;
                 }
                 else
                 {
-                    _activeIndicator.Left = menuStrip.Left + activeItem.Bounds.Left;
-                    _activeIndicator.Top = menuStrip.Bottom;
+                    _activeIndicator.Left = menuStrip!.Left + activeItem.Bounds.Left;
+                    _activeIndicator.Top = menuStrip!.Bottom;
                     _activeIndicator.Width = activeItem.Bounds.Width;
                 }
             }
 
-            lblStatus.Text = $"Раздел: {ScreenTitles.Get(screen)}";
+            lblStatus!.Text = $"Раздел: {ScreenTitles.Get(screen)}";
         }
     }
 
     private void LoadPanelContent(Panel container, ScreenId screen)
     {
-        var factory = new ScreenFactory();
-        var content = factory.Create(screen);
+        var content = _screenFactory.Create(screen);
         content.Dock = DockStyle.Fill;
         container.Controls.Add(content);
     }
 
     private void ResetMenuHighlight()
     {
-        foreach (ToolStripItem item in menuStrip.Items)
+        foreach (ToolStripItem item in menuStrip!.Items)
         {
             item.BackColor = SystemColors.Control;
             item.ForeColor = SystemColors.ControlText;
@@ -224,13 +229,13 @@ public partial class MainForm : Form, IMainView
                 Point itemScreenPoint = activeItem.Owner.PointToScreen(activeItem.Bounds.Location);
                 Point itemClientPoint = this.PointToClient(itemScreenPoint);
                 _activeIndicator.Left = itemClientPoint.X;
-                _activeIndicator.Top = menuStrip.Bottom;
+                _activeIndicator.Top = menuStrip!.Bottom;
                 _activeIndicator.Width = activeItem.Bounds.Width;
             }
             else
             {
-                _activeIndicator.Left = menuStrip.Left + activeItem.Bounds.Left;
-                _activeIndicator.Top = menuStrip.Bottom;
+                _activeIndicator.Left = menuStrip!.Left + activeItem.Bounds.Left;
+                _activeIndicator.Top = menuStrip!.Bottom;
                 _activeIndicator.Width = activeItem.Bounds.Width;
             }
         }

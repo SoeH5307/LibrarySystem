@@ -17,9 +17,6 @@ public interface IMainView
     /// <summary>Окно загружено и готово к работе.</summary>
     event EventHandler? ViewLoaded;
 
-    /// <summary>Пользователь выбрал раздел (пункт меню или кнопка).</summary>
-    event EventHandler<ScreenId>? ScreenRequested;
-
     /// <summary>Показать пользователю сообщение.</summary>
     void ShowMessage(string message);
 
