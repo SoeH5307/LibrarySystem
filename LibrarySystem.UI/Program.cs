@@ -39,8 +39,8 @@ internal static class Program
             return;
 
         // После успешного входа запускаем главное окно с SQLite-репозиториями
-        var mainForm = new MainForm();
         var factory = new ScreenFactory(bookRepo, readerRepo, loanRepo);
+        var mainForm = new MainForm(factory);
         var navigator = new FormNavigator(mainForm, factory);
         _ = new MainPresenter(mainForm, navigator, selectedRole);
 
