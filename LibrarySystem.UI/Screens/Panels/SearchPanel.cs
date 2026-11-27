@@ -18,10 +18,6 @@ public sealed partial class SearchPanel : Panel
     private readonly Button _btnSearch = new();
     private readonly Button _btnClear = new();
 
-    public SearchPanel() : this(new BookRepository())
-    {
-    }
-
     public SearchPanel(IBookRepository bookRepository)
     {
         _bookRepository = bookRepository;

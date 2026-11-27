@@ -15,10 +15,6 @@ public sealed partial class ReturnPanel : Panel
     private readonly Button _btnReturn = new();
     private readonly Button _btnRefresh = new();
 
-    public ReturnPanel() : this(new LoanRepository())
-    {
-    }
-
     public ReturnPanel(ILoanRepository loanRepository)
     {
         _loanRepository = loanRepository;

@@ -13,10 +13,6 @@ public sealed partial class ProfilePanel : Panel
     private readonly DataGridView _gridMyBooks = new();
     private readonly Label _infoLabel = new();
 
-    public ProfilePanel() : this(new ReaderRepository(), new LoanRepository())
-    {
-    }
-
     public ProfilePanel(IReaderRepository readerRepository, ILoanRepository loanRepository)
     {
         _readerRepository = readerRepository;

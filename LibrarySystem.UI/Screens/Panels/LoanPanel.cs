@@ -19,10 +19,6 @@ public sealed partial class LoanPanel : Panel
     private readonly Button _btnIssue = new();
     private readonly Button _btnRefresh = new();
 
-    public LoanPanel() : this(new BookRepository(), new ReaderRepository(), new LoanRepository())
-    {
-    }
-
     public LoanPanel(IBookRepository bookRepository, IReaderRepository readerRepository, ILoanRepository loanRepository)
     {
         _bookRepository = bookRepository;
@@ -82,11 +78,11 @@ public sealed partial class LoanPanel : Panel
         // Row 2: Buttons
         var btnPanel = new FlowLayoutPanel { Dock = DockStyle.Fill, FlowDirection = FlowDirection.LeftToRight, Padding = new Padding(0, 8, 0, 0) };
         _btnIssue.Text = "Выдать книгу";
-        _btnIssue.Size = new Size(140, 35);
+        _btnIssue.Size = new Size(140, 30);
         _btnIssue.BackColor = System.Drawing.Color.FromArgb(0, 120, 215);
         _btnIssue.ForeColor = Color.White;
         _btnRefresh.Text = "Обновить";
-        _btnRefresh.Size = new Size(100, 35);
+        _btnRefresh.Size = new Size(100, 30);
         btnPanel.Controls.Add(_btnIssue);
         btnPanel.Controls.Add(_btnRefresh);
         layout.Controls.Add(btnPanel, 0, 2);
