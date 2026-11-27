@@ -1,5 +1,6 @@
 using LibrarySystem.Core.Models;
 using LibrarySystem.Data.Repositories;
+using LibrarySystem.Logic.Navigation;
 using System.Windows.Forms;
 
 namespace LibrarySystem.UI.Screens.Panels;
@@ -20,15 +21,15 @@ public sealed partial class ReadersPanel : Panel
     private readonly Button _btnAddReader = new();
     private readonly Button _btnDeleteReader = new();
 
-    public ReadersPanel(IReaderRepository readerRepository, ILoanRepository loanRepository)
+    public ReadersPanel(IReaderRepository readerRepository, ILoanRepository loanRepository, UserRole role = UserRole.Librarian)
     {
         _readerRepository = readerRepository;
         _loanRepository = loanRepository;
         Dock = DockStyle.Fill;
-        BuildUI();
+        BuildUI(role);
     }
 
-    private void BuildUI()
+    private void BuildUI(UserRole role = UserRole.Librarian)
     {
         var layout = new TableLayoutPanel
         {
@@ -75,15 +76,25 @@ public sealed partial class ReadersPanel : Panel
         layout.SetColumnSpan(_grid, 4);
 
         var btnPanel = new FlowLayoutPanel { Dock = DockStyle.Fill, FlowDirection = FlowDirection.LeftToRight, Padding = new Padding(0, 8, 0, 0) };
-        _btnAddReader.Text = "Зарегистрировать";
-        _btnAddReader.Size = new Size(150, 30);
-        _btnDeleteReader.Text = "Удалить";
-        _btnDeleteReader.Size = new Size(90, 30);
-        _btnRefresh.Text = "Обновить";
-        _btnRefresh.Size = new Size(90, 30);
-        btnPanel.Controls.Add(_btnAddReader);
-        btnPanel.Controls.Add(_btnDeleteReader);
-        btnPanel.Controls.Add(_btnRefresh);
+
+        if (role == UserRole.Librarian)
+        {
+            _btnAddReader.Text = "Зарегистрировать";
+            _btnAddReader.Size = new Size(150, 30);
+            _btnDeleteReader.Text = "Удалить";
+            _btnDeleteReader.Size = new Size(90, 30);
+            _btnRefresh.Text = "Обновить";
+            _btnRefresh.Size = new Size(90, 30);
+            btnPanel.Controls.Add(_btnAddReader);
+            btnPanel.Controls.Add(_btnDeleteReader);
+            btnPanel.Controls.Add(_btnRefresh);
+        }
+        else
+        {
+            _btnRefresh.Text = "Обновить";
+            _btnRefresh.Size = new Size(90, 30);
+            btnPanel.Controls.Add(_btnRefresh);
+        }
 
         var bottomPanel = new TableLayoutPanel { Dock = DockStyle.Fill, ColumnCount = 2, RowCount = 1, Padding = new Padding(16, 8, 16, 16) };
         bottomPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50));
@@ -104,8 +115,12 @@ public sealed partial class ReadersPanel : Panel
         _btnSearch.Click += (_, _) => LoadReaders(_searchBox.Text);
         _searchBox.KeyDown += (s, e) => { if (e.KeyCode == Keys.Enter) LoadReaders(_searchBox.Text); };
         _btnRefresh.Click += (_, _) => LoadReaders(string.Empty);
-        _btnAddReader.Click += (_, _) => AddReader();
-        _btnDeleteReader.Click += (_, _) => DeleteReader();
+
+        if (role == UserRole.Librarian)
+        {
+            _btnAddReader.Click += (_, _) => AddReader();
+            _btnDeleteReader.Click += (_, _) => DeleteReader();
+        }
 
         LoadReaders(string.Empty);
     }

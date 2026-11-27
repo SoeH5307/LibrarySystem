@@ -27,17 +27,17 @@ public sealed class ScreenFactory : IScreenFactory
     {
     }
 
-    public System.Windows.Forms.Panel Create(ScreenId screen)
+    public System.Windows.Forms.Panel Create(ScreenId screen, UserRole role = UserRole.Librarian)
     {
         return screen switch
         {
-            ScreenId.Catalog => new CatalogPanel(_bookRepo),
-            ScreenId.Readers => new ReadersPanel(_readerRepo, _loanRepo),
+            ScreenId.Catalog => new CatalogPanel(_bookRepo, role),
+            ScreenId.Readers => new ReadersPanel(_readerRepo, _loanRepo, role),
             ScreenId.Loan => new LoanPanel(_bookRepo, _readerRepo, _loanRepo),
             ScreenId.Return => new ReturnPanel(_loanRepo),
-            ScreenId.Search => new SearchPanel(_bookRepo),
+            ScreenId.Search => new SearchPanel(_bookRepo, role),
             ScreenId.Profile => new ProfilePanel(_readerRepo, _loanRepo),
-            _ => new CatalogPanel(_bookRepo)
+            _ => new CatalogPanel(_bookRepo, role)
         };
     }
 }

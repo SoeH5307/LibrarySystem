@@ -1,5 +1,6 @@
 using LibrarySystem.Core.Models;
 using LibrarySystem.Data.Repositories;
+using LibrarySystem.Logic.Navigation;
 using System.Windows.Forms;
 
 namespace LibrarySystem.UI.Screens.Panels;
@@ -18,14 +19,14 @@ public sealed partial class SearchPanel : Panel
     private readonly Button _btnSearch = new();
     private readonly Button _btnClear = new();
 
-    public SearchPanel(IBookRepository bookRepository)
+    public SearchPanel(IBookRepository bookRepository, UserRole role = UserRole.Librarian)
     {
         _bookRepository = bookRepository;
         Dock = DockStyle.Fill;
-        BuildUI();
+        BuildUI(role);
     }
 
-    private void BuildUI()
+    private void BuildUI(UserRole role = UserRole.Librarian)
     {
         var layout = new TableLayoutPanel
         {

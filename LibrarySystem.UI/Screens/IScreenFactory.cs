@@ -7,5 +7,5 @@ namespace LibrarySystem.UI.Screens;
 /// </summary>
 public interface IScreenFactory
 {
-    System.Windows.Forms.Panel Create(ScreenId screen);
+    System.Windows.Forms.Panel Create(ScreenId screen, UserRole role);
 }

@@ -1,11 +1,13 @@
 using LibrarySystem.Core.Models;
 using LibrarySystem.Data.Repositories;
+using LibrarySystem.Logic.Navigation;
 using System.Windows.Forms;
 
 namespace LibrarySystem.UI.Screens.Panels;
 
 /// <summary>
-/// Панель каталога и фонда: список книг, поиск, добавление/списание экземпляров.
+/// Панель каталога и фонда: список книг, поиск, добавление/списание/удаление экземпляров.
+/// Для читателя кнопки управления скрыты.
 /// </summary>
 public sealed partial class CatalogPanel : Panel
 {
@@ -19,15 +21,16 @@ public sealed partial class CatalogPanel : Panel
     private readonly Button _btnAddEdition = new();
     private readonly Button _btnAddCopy = new();
     private readonly Button _btnWriteOff = new();
+    private readonly Button _btnDeleteBook = new();
 
-    public CatalogPanel(IBookRepository bookRepository)
+    public CatalogPanel(IBookRepository bookRepository, UserRole role = UserRole.Librarian)
     {
         _bookRepository = bookRepository;
         Dock = DockStyle.Fill;
-        BuildUI();
+        BuildUI(role);
     }
 
-    private void BuildUI()
+    private void BuildUI(UserRole role)
     {
         var layout = new TableLayoutPanel
         {
@@ -78,18 +81,31 @@ public sealed partial class CatalogPanel : Panel
         layout.SetColumnSpan(_grid, 5);
 
         var btnPanel = new FlowLayoutPanel { Dock = DockStyle.Fill, FlowDirection = FlowDirection.LeftToRight, Padding = new Padding(0, 8, 0, 0) };
-        _btnAddEdition.Text = "Добавить издание";
-        _btnAddEdition.Size = new Size(140, 30);
-        _btnAddCopy.Text = "Принять экземпляр";
-        _btnAddCopy.Size = new Size(140, 30);
-        _btnWriteOff.Text = "Списать экземпляр";
-        _btnWriteOff.Size = new Size(140, 30);
-        _btnRefresh.Text = "Обновить";
-        _btnRefresh.Size = new Size(90, 30);
-        btnPanel.Controls.Add(_btnAddEdition);
-        btnPanel.Controls.Add(_btnAddCopy);
-        btnPanel.Controls.Add(_btnWriteOff);
-        btnPanel.Controls.Add(_btnRefresh);
+
+        if (role == UserRole.Librarian)
+        {
+            _btnAddEdition.Text = "Добавить издание";
+            _btnAddEdition.Size = new Size(140, 30);
+            _btnAddCopy.Text = "Принять экземпляр";
+            _btnAddCopy.Size = new Size(140, 30);
+            _btnWriteOff.Text = "Списать экземпляр";
+            _btnWriteOff.Size = new Size(140, 30);
+            _btnDeleteBook.Text = "Удалить книгу";
+            _btnDeleteBook.Size = new Size(120, 30);
+            _btnRefresh.Text = "Обновить";
+            _btnRefresh.Size = new Size(90, 30);
+            btnPanel.Controls.Add(_btnAddEdition);
+            btnPanel.Controls.Add(_btnAddCopy);
+            btnPanel.Controls.Add(_btnWriteOff);
+            btnPanel.Controls.Add(_btnDeleteBook);
+            btnPanel.Controls.Add(_btnRefresh);
+        }
+        else
+        {
+            _btnRefresh.Text = "Обновить";
+            _btnRefresh.Size = new Size(90, 30);
+            btnPanel.Controls.Add(_btnRefresh);
+        }
 
         var bottomPanel = new TableLayoutPanel { Dock = DockStyle.Fill, ColumnCount = 2, RowCount = 1, Padding = new Padding(16, 8, 16, 16) };
         bottomPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50));
@@ -110,9 +126,14 @@ public sealed partial class CatalogPanel : Panel
         _btnSearch.Click += (_, _) => LoadBooks(_searchBox.Text);
         _searchBox.KeyDown += (s, e) => { if (e.KeyCode == Keys.Enter) LoadBooks(_searchBox.Text); };
         _btnRefresh.Click += (_, _) => LoadBooks(string.Empty);
-        _btnAddEdition.Click += (_, _) => AddEdition();
-        _btnAddCopy.Click += (_, _) => AddCopy();
-        _btnWriteOff.Click += (_, _) => WriteOffCopy();
+
+        if (role == UserRole.Librarian)
+        {
+            _btnAddEdition.Click += (_, _) => AddEdition();
+            _btnAddCopy.Click += (_, _) => AddCopy();
+            _btnWriteOff.Click += (_, _) => WriteOffCopy();
+            _btnDeleteBook.Click += (_, _) => DeleteBook();
+        }
 
         LoadBooks(string.Empty);
     }
@@ -232,6 +253,38 @@ public sealed partial class CatalogPanel : Panel
         catch (Exception ex)
         {
             MessageBox.Show(this, $"Ошибка: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+    }
+
+    private void DeleteBook()
+    {
+        if (_grid.CurrentRow == null)
+        {
+            _infoLabel.Text = "Выберите книгу в таблице.";
+            return;
+        }
+
+        int bookId = (int)_grid.CurrentRow.Cells[0].Value;
+        var bookTitle = _grid.CurrentRow.Cells[1].Value?.ToString() ?? "книга";
+
+        var result = MessageBox.Show(this,
+            $"Удалить книгу «{bookTitle}» (код {bookId}) из каталога?",
+            "Подтверждение удаления",
+            MessageBoxButtons.YesNo,
+            MessageBoxIcon.Question);
+
+        if (result == DialogResult.Yes)
+        {
+            try
+            {
+                _bookRepository.Delete(bookId);
+                LoadBooks(string.Empty);
+                _infoLabel.Text = "Книга удалена из каталога.";
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(this, $"Ошибка: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
     }
 }

@@ -46,14 +46,6 @@ public partial class MainForm : Form, IMainView
         miLoan!.Click += (_, _) => NavigateTo(ScreenId.Loan);
         miReturn!.Click += (_, _) => NavigateTo(ScreenId.Return);
         miSearch!.Click += (_, _) => NavigateTo(ScreenId.Search);
-
-        // Загрузка панелей (UserControl'ы) в контейнеры
-        LoadPanelContent(pnlCatalog!, ScreenId.Catalog);
-        LoadPanelContent(pnlReaders!, ScreenId.Readers);
-        LoadPanelContent(pnlLoan!, ScreenId.Loan);
-        LoadPanelContent(pnlReturn!, ScreenId.Return);
-        LoadPanelContent(pnlSearch!, ScreenId.Search);
-        LoadPanelContent(pnlProfile!, ScreenId.Profile);
     }
 
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -84,6 +76,14 @@ public partial class MainForm : Form, IMainView
         miLoan!.Visible = isLibrarian;
         miReturn!.Visible = isLibrarian;
         miSearch!.Visible = true;
+
+        // Загружаем панели с правильной ролью (только один раз при входе)
+        LoadPanelContent(pnlCatalog!, ScreenId.Catalog);
+        LoadPanelContent(pnlReaders!, ScreenId.Readers);
+        LoadPanelContent(pnlLoan!, ScreenId.Loan);
+        LoadPanelContent(pnlReturn!, ScreenId.Return);
+        LoadPanelContent(pnlSearch!, ScreenId.Search);
+        LoadPanelContent(pnlProfile!, ScreenId.Profile);
 
         // Активный раздел по умолчанию — Каталог
         NavigateTo(ScreenId.Catalog);
@@ -160,7 +160,9 @@ public partial class MainForm : Form, IMainView
 
     private void LoadPanelContent(Panel container, ScreenId screen)
     {
-        var content = _screenFactory.Create(screen);
+        // Очищаем контейнер перед добавлением (избегаем дубликатов)
+        container.Controls.Clear();
+        var content = _screenFactory.Create(screen, _userRole);
         content.Dock = DockStyle.Fill;
         container.Controls.Add(content);
     }
